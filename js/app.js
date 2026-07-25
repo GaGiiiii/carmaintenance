@@ -2,6 +2,12 @@
 // Depends on js/state.js (cars, activeCarName, sortMode, getActiveCar, getSortedParts,
 // saveCars, partStatus, STATUS_META, ...).
 
+// How a service renders its items: checklist (tick-off tasks) or a plain reference list.
+const SERVICE_DISPLAY_OPTIONS = [
+    { value: 'check', label: 'Čeklista (sa kvačicama)' },
+    { value: 'list', label: 'Lista (bez kvačica)' }
+];
+
 // ----- Modal instances -----
 const formModal = new bootstrap.Modal(document.getElementById('formModal'));
 const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
@@ -63,7 +69,8 @@ function rangeText(from, to) {
 }
 
 // ----- Generic form modal -----
-// fields: [{ key, label, value, type: 'text'|'km'|'textarea', placeholder }]
+// fields: [{ key, label, value, type: 'text'|'km'|'textarea'|'select', placeholder, options }]
+//   options (select only): [{ value, label }]
 // onSave(values) -> error string (shown inline) or null on success.
 let formCallback = null;
 function openForm(title, fields, onSave) {
@@ -81,6 +88,15 @@ function openForm(title, fields, onSave) {
             input = document.createElement('textarea');
             input.className = 'form-control';
             input.rows = 2;
+        } else if (f.type === 'select') {
+            input = document.createElement('select');
+            input.className = 'form-select';
+            (f.options || []).forEach(o => {
+                const opt = document.createElement('option');
+                opt.value = o.value;
+                opt.textContent = o.label;
+                input.appendChild(opt);
+            });
         } else {
             input = document.createElement('input');
             input.type = 'text';
@@ -89,7 +105,7 @@ function openForm(title, fields, onSave) {
         }
         input.id = 'field-' + f.key;
         input.value = f.value == null ? '' : f.value;
-        if (f.placeholder) input.placeholder = f.placeholder;
+        if (f.placeholder && f.type !== 'select') input.placeholder = f.placeholder;
         input.dataset.type = f.type || 'text';
         group.append(label, input);
         wrap.appendChild(group);
@@ -201,6 +217,7 @@ function renderServices() {
     car.services.forEach(svc => {
         const total = svc.items.length;
         const done = svc.items.filter(i => i.done).length;
+        const isCheck = svc.checklist !== false; // plain list when explicitly false
 
         const group = document.createElement('div');
         group.className = 'service-group';
@@ -224,7 +241,7 @@ function renderServices() {
 
         const actions = document.createElement('div');
         actions.className = 'action-group';
-        if (total) {
+        if (isCheck && total) {
             const cnt = document.createElement('span');
             cnt.className = 'service-count';
             cnt.textContent = `${done}/${total}`;
@@ -238,30 +255,42 @@ function renderServices() {
         head.append(titleWrap, actions);
         group.appendChild(head);
 
-        // ---- Progress bar (only when there are items) ----
-        if (total) {
+        // ---- Progress bar (checklist services with items only) ----
+        if (isCheck && total) {
             const bar = document.createElement('div');
             bar.className = 'service-progress';
             bar.innerHTML = `<span style="width:${done / total * 100}%"></span>`;
             group.appendChild(bar);
         }
 
-        // ---- Checkable items as list-group rows (identical row styling to Delovi / Problemi) ----
+        // ---- Items as list-group rows (same styling as Delovi / Problemi) ----
         if (total) {
             const ul = document.createElement('ul');
             ul.className = 'list-group';
             svc.items.forEach((it, idx) => {
                 const li = document.createElement('li');
-                li.className = 'list-group-item check-item' + (it.done ? ' done' : '');
-                const cbox = document.createElement('span');
-                cbox.className = 'cbox';
-                cbox.innerHTML = '<i class="fas fa-check"></i>';
-                const text = document.createElement('span');
-                text.className = 'check-text';
-                text.textContent = it.name;
-                li.append(cbox, text,
-                    iconBtn('fa-xmark', 'Ukloni stavku', () => { svc.items.splice(idx, 1); saveCars(); renderServices(); }, 'act-del'));
-                li.onclick = () => { it.done = !it.done; saveCars(); renderServices(); };
+                const delBtn = iconBtn('fa-xmark', 'Ukloni stavku', () => { svc.items.splice(idx, 1); saveCars(); renderServices(); }, 'act-del');
+                if (isCheck) {
+                    li.className = 'list-group-item check-item' + (it.done ? ' done' : '');
+                    const cbox = document.createElement('span');
+                    cbox.className = 'cbox';
+                    cbox.innerHTML = '<i class="fas fa-check"></i>';
+                    const text = document.createElement('span');
+                    text.className = 'check-text';
+                    text.textContent = it.name;
+                    li.append(cbox, text, delBtn);
+                    li.onclick = () => { it.done = !it.done; saveCars(); renderServices(); };
+                } else {
+                    // Plain reference list: no checkbox, no toggle — just the item + delete.
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center gap-2';
+                    const text = document.createElement('span');
+                    text.className = 'flex-grow-1';
+                    text.textContent = it.name;
+                    const ctrls = document.createElement('span');
+                    ctrls.className = 'action-group';
+                    ctrls.appendChild(delBtn);
+                    li.append(text, ctrls);
+                }
                 ul.appendChild(li);
             });
             group.appendChild(ul);
@@ -431,10 +460,11 @@ function openServiceModal() {
     openForm('Novi servis', [
         { key: 'name', label: 'Naziv servisa', value: '', type: 'text', placeholder: 'npr. Mali servis' },
         { key: 'targetFrom', label: 'Ciljna kilometraža — od (km)', value: '', type: 'km', placeholder: 'npr. 161K' },
-        { key: 'targetTo', label: 'Ciljna kilometraža — do (km)', value: '', type: 'km', placeholder: 'npr. 162K' }
+        { key: 'targetTo', label: 'Ciljna kilometraža — do (km)', value: '', type: 'km', placeholder: 'npr. 162K' },
+        { key: 'display', label: 'Prikaz stavki', value: 'check', type: 'select', options: SERVICE_DISPLAY_OPTIONS }
     ], (v) => {
         if (!v.name) return 'Naziv ne može biti prazan.';
-        car.services.push({ id: uid(), name: v.name, targetFrom: v.targetFrom, targetTo: v.targetTo, items: [] });
+        car.services.push({ id: uid(), name: v.name, targetFrom: v.targetFrom, targetTo: v.targetTo, checklist: v.display !== 'list', items: [] });
         saveCars(); renderServices();
         return null;
     });
@@ -447,10 +477,11 @@ function editService(id) {
     openForm('Izmeni servis', [
         { key: 'name', label: 'Naziv servisa', value: svc.name, type: 'text' },
         { key: 'targetFrom', label: 'Ciljna kilometraža — od (km)', value: svc.targetFrom, type: 'km' },
-        { key: 'targetTo', label: 'Ciljna kilometraža — do (km)', value: svc.targetTo, type: 'km' }
+        { key: 'targetTo', label: 'Ciljna kilometraža — do (km)', value: svc.targetTo, type: 'km' },
+        { key: 'display', label: 'Prikaz stavki', value: svc.checklist === false ? 'list' : 'check', type: 'select', options: SERVICE_DISPLAY_OPTIONS }
     ], (v) => {
         if (!v.name) return 'Naziv ne može biti prazan.';
-        Object.assign(svc, { name: v.name, targetFrom: v.targetFrom, targetTo: v.targetTo });
+        Object.assign(svc, { name: v.name, targetFrom: v.targetFrom, targetTo: v.targetTo, checklist: v.display !== 'list' });
         saveCars(); renderServices();
         return null;
     });

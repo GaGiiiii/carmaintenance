@@ -18,13 +18,13 @@ function seedCars() {
         mileage: 162000,
         services: [
             {
-                id: uid(), name: 'Mali servis', targetFrom: 161000, targetTo: 162000, items: [
+                id: uid(), name: 'Mali servis', targetFrom: 161000, targetTo: 162000, checklist: true, items: [
                     { name: 'Nemiran rad u leru', done: false },
                     { name: 'PPF folije na farove', done: false }
                 ]
             },
             {
-                id: uid(), name: 'Veliki servis', targetFrom: 160000, targetTo: null, items: [
+                id: uid(), name: 'Veliki servis', targetFrom: 160000, targetTo: null, checklist: false, items: [
                     { name: 'Bobine', done: false },
                     { name: 'Svećice?', done: false },
                     { name: 'Ulje u kočnicama', done: false }
@@ -63,6 +63,7 @@ function normalizeCar(c) {
             name: typeof s.name === 'string' ? s.name : 'Servis',
             targetFrom: toKm(s.targetFrom),
             targetTo: toKm(s.targetTo),
+            checklist: s.checklist !== false, // default true; plain reference list when false
             items: Array.isArray(s.items) ? s.items.map(it => ({
                 name: typeof it === 'string' ? it : (it.name || ''),
                 done: !!(it && it.done)
