@@ -18,16 +18,16 @@ function seedCars() {
         mileage: 162000,
         services: [
             {
-                id: uid(), name: 'Mali servis', targetFrom: 161000, targetTo: 162000, checklist: true, items: [
-                    { name: 'Nemiran rad u leru', done: false },
-                    { name: 'PPF folije na farove', done: false }
+                id: uid(), name: 'Mali servis', targetFrom: 161000, targetTo: 162000, items: [
+                    { name: 'Nemiran rad u leru' },
+                    { name: 'PPF folije na farove' }
                 ]
             },
             {
-                id: uid(), name: 'Veliki servis', targetFrom: 160000, targetTo: null, checklist: false, items: [
-                    { name: 'Bobine', done: false },
-                    { name: 'Svećice?', done: false },
-                    { name: 'Ulje u kočnicama', done: false }
+                id: uid(), name: 'Veliki servis', targetFrom: 160000, targetTo: null, items: [
+                    { name: 'Bobine' },
+                    { name: 'Svećice?' },
+                    { name: 'Ulje u kočnicama' }
                 ]
             }
         ],
@@ -63,10 +63,8 @@ function normalizeCar(c) {
             name: typeof s.name === 'string' ? s.name : 'Servis',
             targetFrom: toKm(s.targetFrom),
             targetTo: toKm(s.targetTo),
-            checklist: s.checklist !== false, // default true; plain reference list when false
             items: Array.isArray(s.items) ? s.items.map(it => ({
-                name: typeof it === 'string' ? it : (it.name || ''),
-                done: !!(it && it.done)
+                name: typeof it === 'string' ? it : (it.name || '')
             })).filter(it => it.name) : []
         })) : [],
         parts: Array.isArray(c.parts) ? c.parts.map(p => ({
