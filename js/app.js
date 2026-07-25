@@ -213,7 +213,7 @@ function renderServices() {
         ctrls.append(
             iconBtn('fa-plus', 'Dodaj stavku', () => addServiceItem(svc.id)),
             iconBtn('fa-pen', 'Izmeni servis', () => editService(svc.id)),
-            iconBtn('fa-trash', 'Obriši servis', () => deleteService(svc.id), 'text-danger')
+            iconBtn('fa-trash', 'Obriši servis', () => deleteService(svc.id), 'act-del')
         );
         head.append(left, ctrls);
         block.appendChild(head);
@@ -231,7 +231,7 @@ function renderServices() {
             row.innerHTML = `<i class="far ${it.done ? 'fa-square-check' : 'fa-square'}"></i>` +
                 `<span class="check-text flex-grow-1">${escapeHtml(it.name)}</span>`;
             row.onclick = () => { it.done = !it.done; saveCars(); renderServices(); };
-            const del = iconBtn('fa-xmark', 'Ukloni stavku', () => { svc.items.splice(idx, 1); saveCars(); renderServices(); }, 'text-danger');
+            const del = iconBtn('fa-xmark', 'Ukloni stavku', () => { svc.items.splice(idx, 1); saveCars(); renderServices(); }, 'act-del');
             row.appendChild(del);
             block.appendChild(row);
         });
@@ -277,9 +277,9 @@ function renderParts() {
         badge.textContent = meta.label;
         right.appendChild(badge);
         right.append(
-            iconBtn('fa-check', 'Obavljeno (zamenjeno na trenutnoj kilometraži)', () => markPartDone(p.id), 'text-success'),
+            iconBtn('fa-check', 'Obavljeno (zamenjeno na trenutnoj kilometraži)', () => markPartDone(p.id), 'act-done'),
             iconBtn('fa-pen', 'Izmeni deo', () => openPartModal(p.id)),
-            iconBtn('fa-trash', 'Obriši deo', () => deletePart(p.id), 'text-danger')
+            iconBtn('fa-trash', 'Obriši deo', () => deletePart(p.id), 'act-del')
         );
 
         li.append(left, right);
@@ -310,7 +310,7 @@ function renderNoteList(container, arr, key, emptyMsg) {
         ctrls.className = 'd-flex';
         ctrls.append(
             iconBtn('fa-pen', 'Izmeni', () => editNote(key, idx)),
-            iconBtn('fa-trash', 'Obriši', () => { arr.splice(idx, 1); saveCars(); renderNotes(); }, 'text-danger')
+            iconBtn('fa-trash', 'Obriši', () => { arr.splice(idx, 1); saveCars(); renderNotes(); }, 'act-del')
         );
         li.append(ctrls);
         ul.appendChild(li);
