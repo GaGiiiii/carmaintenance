@@ -8,14 +8,15 @@
 // the app fully offline with localStorage only).
 
 (function () {
-    // ===== PASTE YOUR FIREBASE CONFIG HERE =====
+    // ===== FIREBASE CONFIG (shared travelapp project; this app uses its own 'carsyncs' collection) =====
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
-        projectId: "YOUR_PROJECT",
-        storageBucket: "YOUR_PROJECT.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyBpzQJgA0la8m9J7ixUDGf43OxnRCogI9g",
+        authDomain: "travelapp-8b457.firebaseapp.com",
+        projectId: "travelapp-8b457",
+        storageBucket: "travelapp-8b457.firebasestorage.app",
+        messagingSenderId: "635667620374",
+        appId: "1:635667620374:web:aa2027d4d1ae131a554b37",
+        measurementId: "G-TTKJG9HDLX"
     };
     // ===========================================
 
