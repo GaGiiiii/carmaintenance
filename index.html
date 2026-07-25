@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="sr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ODRŽAVANJE AUTOMOBILA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style id="theme-style"></style>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <button class="btn btn-secondary theme-btn" onclick="switchTheme()" title="Promeni temu">
+        <i class="fas fa-palette"></i>
+    </button>
+
+    <div class="container text-center">
+        <h1 class="header-title mt-4 shadow-box p-3 rounded">
+            <i class="fas fa-car-side me-2"></i>ODRŽAVANJE AUTOMOBILA
+        </h1>
+    </div>
+
+    <div class="container my-4">
+        <!-- Car tabs -->
+        <div class="card shadow-box p-3 mb-4">
+            <div class="d-flex align-items-center flex-wrap gap-2">
+                <div id="car-tabs" class="d-flex flex-wrap gap-2 flex-grow-1"></div>
+                <button class="btn list-manage-btn" onclick="openRenameCarModal()" title="Preimenuj auto">
+                    <i class="fas fa-pen"></i>
+                </button>
+                <button class="btn list-manage-btn" onclick="openDeleteCarModal()" title="Obriši auto">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button class="btn list-manage-btn" id="sync-btn" onclick="openSyncModal()" title="Sinhronizacija uređaja">
+                    <i class="fas fa-cloud"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard: mileage + status summary -->
+        <div class="card shadow-box p-3 mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <div class="dash-label">Trenutna kilometraža</div>
+                    <div class="dash-mileage">
+                        <span id="mileage-value">—</span>
+                        <button class="copy-btn" onclick="openMileageModal()" title="Izmeni kilometražu">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="status-summary" class="d-flex flex-wrap gap-2 justify-content-end"></div>
+            </div>
+        </div>
+
+        <!-- Services -->
+        <div class="card shadow-box p-3 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="section-title mb-0"><i class="fas fa-screwdriver-wrench me-2"></i>SERVISI</h5>
+                <button class="btn btn-primary btn-sm" onclick="openServiceModal()">
+                    <i class="fas fa-plus me-1"></i>Servis
+                </button>
+            </div>
+            <div id="services-list"></div>
+        </div>
+
+        <!-- Parts / maintenance log -->
+        <div class="card shadow-box p-3 mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h5 class="section-title mb-0"><i class="fas fa-gears me-2"></i>DELOVI I ODRŽAVANJE</h5>
+                <div class="d-flex align-items-center gap-2">
+                    <label for="sort-select" class="sort-label">Sortiraj:</label>
+                    <select id="sort-select" class="sort-select form-select form-select-sm" style="width:auto;">
+                        <option value="status">Status</option>
+                        <option value="next">Sledeća zamena</option>
+                        <option value="az">A-Z</option>
+                        <option value="last">Poslednja zamena</option>
+                    </select>
+                    <button class="btn btn-primary btn-sm" onclick="openPartModal()">
+                        <i class="fas fa-plus me-1"></i>Deo
+                    </button>
+                </div>
+            </div>
+            <div id="parts-list"></div>
+        </div>
+
+        <!-- Problems & Solutions -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card shadow-box p-3 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="section-title mb-0 text-warning-emphasis">
+                            <i class="fas fa-triangle-exclamation me-2"></i>PROBLEMI
+                        </h5>
+                        <button class="btn btn-primary btn-sm" onclick="openNoteModal('problems')">
+                            <i class="fas fa-plus me-1"></i>Problem
+                        </button>
+                    </div>
+                    <div id="problems-list"></div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-box p-3 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="section-title mb-0"><i class="fas fa-lightbulb me-2"></i>REŠENJA</h5>
+                        <button class="btn btn-primary btn-sm" onclick="openNoteModal('solutions')">
+                            <i class="fas fa-plus me-1"></i>Rešenje
+                        </button>
+                    </div>
+                    <div id="solutions-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import / export + storage -->
+        <div class="text-center mb-3">
+            <button class="btn list-manage-btn" onclick="downloadAllCars()" title="Izvezi sve (.json)">
+                <i class="fas fa-download"></i>
+            </button>
+            <button class="btn list-manage-btn" onclick="document.getElementById('restore-input').click()" title="Uvezi / vrati backup (.json)">
+                <i class="fas fa-file-import"></i>
+            </button>
+            <input id="restore-input" type="file" accept="application/json,.json" class="d-none" onchange="restoreBackup(event)">
+        </div>
+        <div id="localstorage-info"></div>
+    </div>
+
+    <div id="copy-popup" class="shadow-box">Sačuvano <button class="btn-close float-end" onclick="hidePopup()"></button></div>
+
+    <!-- Generic Form Modal (add/edit parts, services, cars, mileage, ...) -->
+    <div class="modal fade" id="formModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-dark" id="form-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="form-fields"></div>
+                    <div id="form-error" class="text-danger small mt-2 d-none"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="submitForm()">Sačuvaj</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Confirm Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-dark" id="confirm-message"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="confirm-ok-btn" onclick="submitConfirm()">Obriši</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Alert Modal -->
+    <div class="modal fade" id="alertModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-dark" id="alert-message"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">U redu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sync Modal -->
+    <div class="modal fade" id="syncModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-dark">Sinhronizacija uređaja</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="sync-disconnected">
+                        <p class="small text-dark mb-3">Poveži uređaje da bi podaci o autima bili isti svuda.</p>
+                        <button class="btn btn-primary w-100 mb-3" onclick="cloudCreateCode()">Napravi kod za sinhronizaciju</button>
+                        <div class="text-center small text-muted mb-2">ili unesi postojeći kod</div>
+                        <div class="input-group">
+                            <input id="sync-code-input" class="form-control text-uppercase" placeholder="Unesi kod" autocomplete="off">
+                            <button class="btn btn-secondary" onclick="cloudConnect()">Poveži</button>
+                        </div>
+                        <div id="sync-error" class="text-danger small mt-2 d-none"></div>
+                    </div>
+                    <div id="sync-connected" class="d-none text-center">
+                        <p class="small text-dark mb-1">Povezano. Kod za druge uređaje:</p>
+                        <h3 id="sync-code-display" class="fw-bold text-dark" style="letter-spacing:2px;"></h3>
+                        <button id="copy-code-btn" class="btn btn-secondary btn-sm mb-3" onclick="copySyncCode()">Kopiraj kod</button>
+                        <div class="small text-muted mb-3">Unesi ovaj kod na drugom uređaju da bi se povezao.</div>
+                        <button class="btn btn-danger btn-sm w-100" onclick="cloudDisconnect()">Prekini sinhronizaciju</button>
+                    </div>
+                    <div id="sync-unavailable" class="d-none small text-muted"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Firebase (compat build so sync also works from a local file://) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+    <!-- App scripts (order matters: themes -> state -> app; firebase-sync last) -->
+    <script src="js/themes.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/firebase-sync.js"></script>
+</body>
+
+</html>
