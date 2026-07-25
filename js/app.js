@@ -223,7 +223,7 @@ function renderServices() {
         }
 
         const actions = document.createElement('div');
-        actions.className = 'd-flex align-items-center';
+        actions.className = 'action-group';
         if (total) {
             const cnt = document.createElement('span');
             cnt.className = 'service-count';
@@ -307,12 +307,14 @@ function renderParts() {
         const badge = document.createElement('span');
         badge.className = 'status-badge ' + meta.cls;
         badge.textContent = meta.label;
-        right.appendChild(badge);
-        right.append(
+        const partActions = document.createElement('div');
+        partActions.className = 'action-group';
+        partActions.append(
             iconBtn('fa-check', 'Obavljeno (zamenjeno na trenutnoj kilometraži)', () => markPartDone(p.id), 'act-done'),
             iconBtn('fa-pen', 'Izmeni deo', () => openPartModal(p.id)),
             iconBtn('fa-trash', 'Obriši deo', () => deletePart(p.id), 'act-del')
         );
+        right.append(badge, partActions);
 
         li.append(left, right);
         ul.appendChild(li);
@@ -339,7 +341,7 @@ function renderNoteList(container, arr, key, emptyMsg) {
         span.textContent = text;
         li.append(span);
         const ctrls = document.createElement('span');
-        ctrls.className = 'd-flex';
+        ctrls.className = 'action-group';
         ctrls.append(
             iconBtn('fa-pen', 'Izmeni', () => editNote(key, idx)),
             iconBtn('fa-trash', 'Obriši', () => { arr.splice(idx, 1); saveCars(); renderNotes(); }, 'act-del')

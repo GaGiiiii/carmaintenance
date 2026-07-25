@@ -17,7 +17,7 @@ const themes = [
               .btn-primary { background-color: #5e81ac; border: none; }
               .btn-primary:hover { background-color: #81a1c1; }
               .btn-secondary { background-color: #4c566a; color: #fff; border: none; }
-              .copy-btn, .download-btn { color: #d8dee9; }
+              .copy-btn, .download-btn, .row-action { color: #d8dee9; }
               .copy-btn:hover, .download-btn:hover { color: #81a1c1; }
               #localstorage-info, .dash-label, .dash-mileage { color: #d8dee9; }
               .sort-label { color: #88c0d0; }
@@ -42,7 +42,7 @@ const themes = [
               .btn-primary { background-color: #98c379; border: none; color: #282c34; }
               .btn-primary:hover { background-color: #8ac36f; }
               .btn-secondary { background-color: #5c6370; color: #fff; border: none; }
-              .copy-btn, .download-btn { color: #abb2bf; }
+              .copy-btn, .download-btn, .row-action { color: #abb2bf; }
               .copy-btn:hover, .download-btn:hover { color: #61afef; }
               #localstorage-info, .dash-label, .dash-mileage { color: #abb2bf; }
               .sort-label { color: #e06c75; }
@@ -65,7 +65,7 @@ const themes = [
               .list-group-item:hover { background-color: #e3f2fd; }
               .btn-primary { background-color: #1976d2; border: none; }
               .btn-primary:hover { background-color: #004ba0; }
-              .copy-btn, .download-btn { color: #0d47a1; }
+              .copy-btn, .download-btn, .row-action { color: #0d47a1; }
               .copy-btn:hover, .download-btn:hover { color: #1976d2; }
               #localstorage-info, .dash-label, .dash-mileage { color: #222; }
               .sort-label { color: #1565c0; }
@@ -89,7 +89,7 @@ const themes = [
               .btn-primary { background-color: #d9a066; border: none; color: #4d2e1f; }
               .btn-primary:hover { background-color: #c6894f; }
               .btn-secondary { background-color: #b08968; color: #fff; border: none; }
-              .copy-btn, .download-btn { color: #6b4226; }
+              .copy-btn, .download-btn, .row-action { color: #6b4226; }
               .copy-btn:hover, .download-btn:hover { color: #8b5e3c; }
               #localstorage-info, .dash-label, .dash-mileage { color: #4d2e1f; }
               .sort-label { color: #8b5e3c; }
