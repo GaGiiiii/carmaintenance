@@ -202,17 +202,17 @@ function renderServices() {
         const total = svc.items.length;
         const done = svc.items.filter(i => i.done).length;
 
-        const block = document.createElement('div');
-        block.className = 'service-block';
+        const group = document.createElement('div');
+        group.className = 'service-group';
 
-        // ---- Header: name + target pill on the left, count + actions on the right ----
+        // ---- Header (same style as travelapp category headers): title + target pill | count + actions ----
         const head = document.createElement('div');
-        head.className = 'service-head-row';
+        head.className = 'svc-header';
 
         const titleWrap = document.createElement('div');
         titleWrap.className = 'd-flex align-items-center flex-wrap';
         const name = document.createElement('span');
-        name.className = 'service-name';
+        name.className = 'section-title svc-title';
         name.textContent = svc.name;
         titleWrap.appendChild(name);
         if (svc.targetFrom != null || svc.targetTo != null) {
@@ -236,37 +236,40 @@ function renderServices() {
             iconBtn('fa-trash', 'Obriši servis', () => deleteService(svc.id), 'act-del')
         );
         head.append(titleWrap, actions);
-        block.appendChild(head);
+        group.appendChild(head);
 
         // ---- Progress bar (only when there are items) ----
         if (total) {
             const bar = document.createElement('div');
             bar.className = 'service-progress';
             bar.innerHTML = `<span style="width:${done / total * 100}%"></span>`;
-            block.appendChild(bar);
+            group.appendChild(bar);
         }
 
-        // ---- Checkable items ----
-        const itemsWrap = document.createElement('div');
-        itemsWrap.className = 'service-items';
-        svc.items.forEach((it, idx) => {
-            const row = document.createElement('div');
-            row.className = 'check-item' + (it.done ? ' done' : '');
-            const cbox = document.createElement('span');
-            cbox.className = 'cbox';
-            cbox.innerHTML = '<i class="fas fa-check"></i>';
-            const text = document.createElement('span');
-            text.className = 'check-text';
-            text.textContent = it.name;
-            row.append(cbox, text,
-                iconBtn('fa-xmark', 'Ukloni stavku', () => { svc.items.splice(idx, 1); saveCars(); renderServices(); }, 'act-del'));
-            row.onclick = () => { it.done = !it.done; saveCars(); renderServices(); };
-            itemsWrap.appendChild(row);
-        });
-        if (!total) itemsWrap.innerHTML = '<div class="empty-hint">Nema stavki. Klikni + da dodaš.</div>';
-        block.appendChild(itemsWrap);
+        // ---- Checkable items as list-group rows (identical row styling to Delovi / Problemi) ----
+        if (total) {
+            const ul = document.createElement('ul');
+            ul.className = 'list-group';
+            svc.items.forEach((it, idx) => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item check-item' + (it.done ? ' done' : '');
+                const cbox = document.createElement('span');
+                cbox.className = 'cbox';
+                cbox.innerHTML = '<i class="fas fa-check"></i>';
+                const text = document.createElement('span');
+                text.className = 'check-text';
+                text.textContent = it.name;
+                li.append(cbox, text,
+                    iconBtn('fa-xmark', 'Ukloni stavku', () => { svc.items.splice(idx, 1); saveCars(); renderServices(); }, 'act-del'));
+                li.onclick = () => { it.done = !it.done; saveCars(); renderServices(); };
+                ul.appendChild(li);
+            });
+            group.appendChild(ul);
+        } else {
+            group.insertAdjacentHTML('beforeend', '<div class="empty-hint">Nema stavki. Klikni + da dodaš.</div>');
+        }
 
-        servicesList.appendChild(block);
+        servicesList.appendChild(group);
     });
 }
 

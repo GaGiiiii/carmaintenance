@@ -195,23 +195,25 @@ body {
 .act-done { color: #2ecc71 !important; }
 .act-del  { color: #e74c3c !important; }
 
-/* ---- Service blocks ---- */
-.service-block {
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
+/* ---- Services: same header + .list-group pattern as the rest of the app ---- */
+.service-group {
+    margin-bottom: 18px;
 }
 
-.service-head-row {
+.svc-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
+    margin: 0 2px 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
 }
 
-.service-name {
+.svc-title {
+    font-size: 0.98rem;
     font-weight: 700;
-    font-size: 1.05rem;
+    letter-spacing: 0.02em;
 }
 
 .service-target {
@@ -233,11 +235,11 @@ body {
 }
 
 .service-progress {
-    height: 8px;
+    height: 6px;
     border-radius: 999px;
     background: rgba(128, 128, 128, 0.25);
     overflow: hidden;
-    margin: 12px 0 10px;
+    margin: 0 2px 10px;
 }
 
 .service-progress > span {
@@ -248,19 +250,12 @@ body {
     transition: width 0.25s ease;
 }
 
-/* Custom checkbox rows */
-.check-item {
+/* Checkable list-group rows */
+li.check-item {
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 8px 10px;
-    border-radius: 8px;
-    transition: background 0.12s;
-}
-
-.check-item:hover {
-    background: rgba(128, 128, 128, 0.12);
 }
 
 .check-item .cbox {
