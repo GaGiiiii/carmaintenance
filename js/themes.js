@@ -19,7 +19,7 @@ const themes = [
               .btn-secondary { background-color: #4c566a; color: #fff; border: none; }
               .copy-btn, .download-btn, .row-action { color: #d8dee9; }
               .copy-btn:hover, .download-btn:hover { color: #81a1c1; }
-              #localstorage-info, .dash-label, .dash-mileage { color: #d8dee9; }
+              #localstorage-info, .dash-label, .dash-mileage, .service-count, .service-target { color: #d8dee9; }
               .sort-label { color: #88c0d0; }
               .sub-note { color: #9aa5b1; }
               .service-block { background-color: #434c5e; }
@@ -44,7 +44,7 @@ const themes = [
               .btn-secondary { background-color: #5c6370; color: #fff; border: none; }
               .copy-btn, .download-btn, .row-action { color: #abb2bf; }
               .copy-btn:hover, .download-btn:hover { color: #61afef; }
-              #localstorage-info, .dash-label, .dash-mileage { color: #abb2bf; }
+              #localstorage-info, .dash-label, .dash-mileage, .service-count, .service-target { color: #abb2bf; }
               .sort-label { color: #e06c75; }
               .sub-note { color: #8b93a0; }
               .service-block { background-color: #4b5263; }
@@ -67,7 +67,7 @@ const themes = [
               .btn-primary:hover { background-color: #004ba0; }
               .copy-btn, .download-btn, .row-action { color: #0d47a1; }
               .copy-btn:hover, .download-btn:hover { color: #1976d2; }
-              #localstorage-info, .dash-label, .dash-mileage { color: #222; }
+              #localstorage-info, .dash-label, .dash-mileage, .service-count, .service-target { color: #222; }
               .sort-label { color: #1565c0; }
               .sub-note { color: #6c757d; }
               .service-block { background-color: #f1f3f5; }
@@ -91,7 +91,7 @@ const themes = [
               .btn-secondary { background-color: #b08968; color: #fff; border: none; }
               .copy-btn, .download-btn, .row-action { color: #6b4226; }
               .copy-btn:hover, .download-btn:hover { color: #8b5e3c; }
-              #localstorage-info, .dash-label, .dash-mileage { color: #4d2e1f; }
+              #localstorage-info, .dash-label, .dash-mileage, .service-count, .service-target { color: #4d2e1f; }
               .sort-label { color: #8b5e3c; }
               .sub-note { color: #96775a; }
               .service-block { background-color: #fbead1; }

@@ -182,7 +182,7 @@ body {
     border: none;
     background: none;
     cursor: pointer;
-    padding: 4px 5px;
+    padding: 3px 4px;
     line-height: 1;
     font-size: 1rem;
     transition: filter 0.15s;
@@ -192,11 +192,11 @@ body {
     filter: brightness(1.25);
 }
 
-/* Consistent spacing for a cluster of icon actions */
+/* Consistent, tight spacing for a cluster of icon actions */
 .action-group {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 0;
 }
 
 .act-done { color: #2ecc71 !important; }
