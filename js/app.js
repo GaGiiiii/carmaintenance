@@ -199,43 +199,72 @@ function renderServices() {
         return;
     }
     car.services.forEach(svc => {
+        const total = svc.items.length;
+        const done = svc.items.filter(i => i.done).length;
+
         const block = document.createElement('div');
         block.className = 'service-block';
 
+        // ---- Header: name + target pill on the left, count + actions on the right ----
         const head = document.createElement('div');
-        head.className = 'd-flex justify-content-between align-items-start';
-        const target = (svc.targetFrom != null || svc.targetTo != null)
-            ? `<span class="sub-note ms-2">${rangeText(svc.targetFrom, svc.targetTo)}</span>` : '';
-        const left = document.createElement('div');
-        left.innerHTML = `<span class="service-head">${escapeHtml(svc.name)}</span>${target}`;
-        const ctrls = document.createElement('div');
-        ctrls.className = 'd-flex align-items-center';
-        ctrls.append(
+        head.className = 'service-head-row';
+
+        const titleWrap = document.createElement('div');
+        titleWrap.className = 'd-flex align-items-center flex-wrap';
+        const name = document.createElement('span');
+        name.className = 'service-name';
+        name.textContent = svc.name;
+        titleWrap.appendChild(name);
+        if (svc.targetFrom != null || svc.targetTo != null) {
+            const tgt = document.createElement('span');
+            tgt.className = 'service-target';
+            tgt.textContent = rangeText(svc.targetFrom, svc.targetTo);
+            titleWrap.appendChild(tgt);
+        }
+
+        const actions = document.createElement('div');
+        actions.className = 'd-flex align-items-center';
+        if (total) {
+            const cnt = document.createElement('span');
+            cnt.className = 'service-count';
+            cnt.textContent = `${done}/${total}`;
+            actions.appendChild(cnt);
+        }
+        actions.append(
             iconBtn('fa-plus', 'Dodaj stavku', () => addServiceItem(svc.id)),
             iconBtn('fa-pen', 'Izmeni servis', () => editService(svc.id)),
             iconBtn('fa-trash', 'Obriši servis', () => deleteService(svc.id), 'act-del')
         );
-        head.append(left, ctrls);
+        head.append(titleWrap, actions);
         block.appendChild(head);
 
-        const total = svc.items.length;
-        const done = svc.items.filter(i => i.done).length;
-        const bar = document.createElement('div');
-        bar.className = 'service-progress';
-        bar.innerHTML = `<span style="width:${total ? (done / total * 100) : 0}%"></span>`;
-        block.appendChild(bar);
+        // ---- Progress bar (only when there are items) ----
+        if (total) {
+            const bar = document.createElement('div');
+            bar.className = 'service-progress';
+            bar.innerHTML = `<span style="width:${done / total * 100}%"></span>`;
+            block.appendChild(bar);
+        }
 
+        // ---- Checkable items ----
+        const itemsWrap = document.createElement('div');
+        itemsWrap.className = 'service-items';
         svc.items.forEach((it, idx) => {
             const row = document.createElement('div');
             row.className = 'check-item' + (it.done ? ' done' : '');
-            row.innerHTML = `<i class="far ${it.done ? 'fa-square-check' : 'fa-square'}"></i>` +
-                `<span class="check-text flex-grow-1">${escapeHtml(it.name)}</span>`;
+            const cbox = document.createElement('span');
+            cbox.className = 'cbox';
+            cbox.innerHTML = '<i class="fas fa-check"></i>';
+            const text = document.createElement('span');
+            text.className = 'check-text';
+            text.textContent = it.name;
+            row.append(cbox, text,
+                iconBtn('fa-xmark', 'Ukloni stavku', () => { svc.items.splice(idx, 1); saveCars(); renderServices(); }, 'act-del'));
             row.onclick = () => { it.done = !it.done; saveCars(); renderServices(); };
-            const del = iconBtn('fa-xmark', 'Ukloni stavku', () => { svc.items.splice(idx, 1); saveCars(); renderServices(); }, 'act-del');
-            row.appendChild(del);
-            block.appendChild(row);
+            itemsWrap.appendChild(row);
         });
-        if (!total) block.insertAdjacentHTML('beforeend', '<div class="empty-hint">Nema stavki.</div>');
+        if (!total) itemsWrap.innerHTML = '<div class="empty-hint">Nema stavki. Klikni + da dodaš.</div>';
+        block.appendChild(itemsWrap);
 
         servicesList.appendChild(block);
     });
