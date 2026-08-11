@@ -7,8 +7,9 @@ const formModal = new bootstrap.Modal(document.getElementById('formModal'));
 const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
 const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
 const syncModal = new bootstrap.Modal(document.getElementById('syncModal'));
+const driveModal = new bootstrap.Modal(document.getElementById('driveModal'));
 
-const modalEls = ['formModal', 'confirmModal', 'alertModal', 'syncModal'].map(id => document.getElementById(id));
+const modalEls = ['formModal', 'confirmModal', 'alertModal', 'syncModal', 'driveModal'].map(id => document.getElementById(id));
 modalEls.forEach(m => {
     m.addEventListener('show.bs.modal', () => m.classList.add('d-flex', 'align-items-center'));
     m.addEventListener('hidden.bs.modal', () => m.classList.remove('d-flex', 'align-items-center'));
@@ -639,6 +640,84 @@ async function cloudConnect() {
 function cloudDisconnect() {
     if (window.__cloud) window.__cloud.disconnect();
     updateSyncUI(currentSyncStatus());
+}
+
+// ----- Google Drive backup UI (js/gdrive-backup.js) -----
+const DRIVE_ERRORS = {
+    not_configured: 'Rezervna kopija nije podešena (dodaj Google Client ID u js/gdrive-backup.js).',
+    insecure_origin: 'Rezervna kopija radi samo preko https adrese, ne kad se fajl otvori lokalno.',
+    not_loaded: 'Google se nije učitao (proveri internet).',
+    no_backup: 'Na Drive-u još nema rezervne kopije.',
+    bad_file: 'Fajl s kopijom nije ispravan.',
+    popup_closed: 'Prozor za prijavu je zatvoren.',
+    auth_expired: 'Prijava je istekla — probaj ponovo.',
+    busy: 'Već je u toku.'
+};
+function driveErrorText(code) {
+    return DRIVE_ERRORS[code] || 'Nije uspelo. Proveri internet i probaj ponovo.';
+}
+
+function currentDriveStatus() {
+    return (window.__drive && window.__drive.getStatus()) || { available: false };
+}
+
+function updateDriveUI(st) {
+    const ready = document.getElementById('drive-ready');
+    const unavail = document.getElementById('drive-unavailable');
+    if (!ready || !unavail) return;
+    if (!st || !st.available) {
+        ready.classList.add('d-none');
+        unavail.textContent = driveErrorText(st && st.reason);
+        unavail.classList.remove('d-none');
+        return;
+    }
+    unavail.classList.add('d-none');
+    ready.classList.remove('d-none');
+    document.getElementById('drive-backup-btn').disabled = !!st.busy;
+    document.getElementById('drive-restore-btn').disabled = !!st.busy;
+    const last = document.getElementById('drive-last');
+    last.textContent = st.lastBackup
+        ? 'Poslednja kopija: ' + new Date(st.lastBackup).toLocaleString('sr-RS')
+        : 'Još nema napravljene kopije sa ovog uređaja.';
+}
+window.__onDriveStatus = updateDriveUI;
+
+function driveMessage(text, ok) {
+    const el = document.getElementById('drive-message');
+    el.textContent = text;
+    el.className = 'small mt-2 ' + (ok ? 'text-success' : 'text-danger');
+}
+
+function openDriveModal() {
+    document.getElementById('drive-message').className = 'small mt-2 d-none';
+    driveCancelRestore();
+    updateDriveUI(currentDriveStatus());
+    driveModal.show();
+}
+
+async function driveBackup() {
+    if (!window.__drive) return;
+    driveMessage('Čuvanje u toku…', true);
+    const res = await window.__drive.backup();
+    updateDriveUI(currentDriveStatus());
+    driveMessage(res.ok ? 'Kopija je sačuvana na Drive.' : driveErrorText(res.error), res.ok);
+}
+
+function driveAskRestore() {
+    document.getElementById('drive-restore-confirm').classList.remove('d-none');
+}
+function driveCancelRestore() {
+    const el = document.getElementById('drive-restore-confirm');
+    if (el) el.classList.add('d-none');
+}
+
+async function driveRestore() {
+    if (!window.__drive) return;
+    driveCancelRestore();
+    driveMessage('Vraćanje u toku…', true);
+    const res = await window.__drive.restore();
+    updateDriveUI(currentDriveStatus());
+    driveMessage(res.ok ? 'Podaci su vraćeni iz kopije.' : driveErrorText(res.error), res.ok);
 }
 
 function copySyncCode() {

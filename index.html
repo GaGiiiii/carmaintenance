@@ -38,6 +38,9 @@
                 <button class="btn list-manage-btn" id="sync-btn" onclick="openSyncModal()" title="Sinhronizacija uređaja">
                     <i class="fas fa-cloud"></i>
                 </button>
+                <button class="btn list-manage-btn" id="drive-btn" onclick="openDriveModal()" title="Rezervna kopija na Google Drive">
+                    <i class="fas fa-cloud-arrow-up"></i>
+                </button>
             </div>
         </div>
 
@@ -214,7 +217,42 @@
         </div>
     </div>
 
+    <!-- Google Drive Backup Modal -->
+    <div class="modal fade" id="driveModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold text-dark">Rezervna kopija</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="drive-ready">
+                        <p class="small text-dark mb-3">Sačuvaj kopiju podataka o autima na sopstveni Google Drive.
+                            Kopija se čuva kao <code>carmaintenance-backup.json</code>.</p>
+                        <button id="drive-backup-btn" class="btn btn-primary w-100 mb-2" onclick="driveBackup()">
+                            Napravi rezervnu kopiju</button>
+                        <button id="drive-restore-btn" class="btn btn-secondary w-100" onclick="driveAskRestore()">
+                            Vrati iz kopije</button>
+                        <div id="drive-restore-confirm" class="d-none mt-3 p-2 border rounded">
+                            <div class="small text-danger mb-2">Ovo će zameniti sve trenutne podatke o autima podacima iz kopije.</div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-danger btn-sm flex-grow-1" onclick="driveRestore()">Vrati</button>
+                                <button class="btn btn-secondary btn-sm flex-grow-1" onclick="driveCancelRestore()">Otkaži</button>
+                            </div>
+                        </div>
+                        <div id="drive-last" class="small text-muted mt-3"></div>
+                        <div id="drive-message" class="small mt-2 d-none"></div>
+                    </div>
+                    <div id="drive-unavailable" class="d-none small text-muted"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Google Identity Services (OAuth popup for the Drive backup; https origins only) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <!-- Firebase (compat build so sync also works from a local file://) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -225,6 +263,7 @@
     <script src="js/state.js"></script>
     <script src="js/app.js"></script>
     <script src="js/firebase-sync.js"></script>
+    <script src="js/gdrive-backup.js"></script>
 </body>
 
 </html>

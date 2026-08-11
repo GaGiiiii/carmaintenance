@@ -125,6 +125,15 @@ window.__applyRemoteCars = (remoteCars) => {
     renderAll();
 };
 
+// --- Bridge for the Google Drive backup module (js/gdrive-backup.js) ---
+// Unlike a remote sync change, a restore is a deliberate local action, so it
+// pushes afterwards — otherwise a paired device would sync the old data back.
+window.__applyRestoredCars = (restoredCars) => {
+    if (!Array.isArray(restoredCars)) return;
+    window.__applyRemoteCars(restoredCars);
+    saveCars();
+};
+
 // ---- Status logic: where a part stands relative to current mileage ----
 const SOON_KM = 15000; // "Uskoro" window before the next-due starts
 

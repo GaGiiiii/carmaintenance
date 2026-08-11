@@ -51,6 +51,24 @@ Sync uses a **sync-code** model (no accounts) via Firebase Firestore. This app s
 
 **Security note:** the Firebase web `apiKey` is public by design — it identifies the project, not authenticates it. Access is controlled by the Firestore rules above. Anyone who knows a sync code can read/write that code's data, so treat codes like passwords.
 
+## Google Drive backup (optional)
+
+A manual backup of your car data to your *own* Google Drive, saved as `carmaintenance-backup.json`.
+Off until an OAuth client ID is configured:
+
+1. In the [Google Cloud console](https://console.cloud.google.com) for the same project as Firebase, enable the **Google Drive API**.
+2. Configure the **OAuth consent screen** (External). The only scope needed is `drive.file`, which is *non-sensitive*, so publishing does not require Google's verification review.
+3. Create credentials → **OAuth client ID** → *Web application*, and add `https://<user>.github.io` as an authorized JavaScript origin (add `http://localhost:8000` too if you want it while developing).
+4. Paste the client ID into the marked block at the top of `js/gdrive-backup.js`.
+5. Open the app, click the **cloud-up** button → **Napravi rezervnu kopiju**.
+
+**Backup is manual, by design.** The browser-only OAuth flow yields a ~1-hour access token and no refresh token, so the app cannot back up on a schedule or while it is closed — that would need a server holding long-lived credentials. The button is the whole feature.
+
+Notes:
+- The `drive.file` scope means the app can only ever see files it created itself, never the rest of your Drive.
+- OAuth requires an https origin, so backup is disabled when `index.html` is opened as a local file (unlike Firebase sync, which still works there).
+- There is **one** backup file, overwritten each time — no version history. Restoring replaces all local car data, then pushes to any paired devices.
+
 ## Hosting
 
 Served via **GitHub Pages** from the `main` branch. On the free GitHub plan, Pages requires the repository to be **public**.
