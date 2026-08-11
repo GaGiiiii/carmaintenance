@@ -158,6 +158,23 @@
             } finally { busy = false; notify(); }
         },
 
+        // Looks the backup up without touching local data, so the UI can skip the
+        // "this replaces everything" confirm when there is nothing to restore.
+        async check() {
+            const st = status();
+            if (!st.available) return { ok: false, error: st.reason };
+            if (busy) return { ok: false, error: 'busy' };
+            busy = true; notify();
+            try {
+                const file = await findFile();
+                if (!file) return { ok: false, error: 'no_backup' };
+                return { ok: true, savedAt: file.modifiedTime };
+            } catch (e) {
+                console.error('Drive check error:', e);
+                return { ok: false, error: e.message || 'failed' };
+            } finally { busy = false; notify(); }
+        },
+
         // Replaces local data with the backup file's contents.
         async restore() {
             const st = status();

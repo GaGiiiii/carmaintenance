@@ -703,7 +703,17 @@ async function driveBackup() {
     driveMessage(res.ok ? 'Kopija je sačuvana na Drive.' : driveErrorText(res.error), res.ok);
 }
 
-function driveAskRestore() {
+// Look the backup up first, so an empty Drive reports that instead of making the
+// user confirm a destructive action that would have had nothing to restore.
+async function driveAskRestore() {
+    if (!window.__drive) return;
+    driveMessage('Provera kopije…', true);
+    const res = await window.__drive.check();
+    updateDriveUI(currentDriveStatus());
+    if (!res.ok) { driveMessage(driveErrorText(res.error), false); return; }
+    document.getElementById('drive-message').className = 'small mt-2 d-none';
+    document.getElementById('drive-restore-when').textContent =
+        'Kopija od ' + new Date(res.savedAt).toLocaleString('sr-RS') + '.';
     document.getElementById('drive-restore-confirm').classList.remove('d-none');
 }
 function driveCancelRestore() {
