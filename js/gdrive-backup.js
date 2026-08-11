@@ -17,7 +17,7 @@
 
 (function () {
     // ===== PASTE YOUR GOOGLE OAUTH CLIENT ID HERE =====
-    const CLIENT_ID = "PASTE_YOUR_OAUTH_CLIENT_ID_HERE";
+    const CLIENT_ID = "635667620374-nusvfiqr7486mqrf9cj398k3bbiu6voe.apps.googleusercontent.com";
     // ==================================================
 
     // ---- per-app configuration ----
