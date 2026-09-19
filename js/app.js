@@ -238,7 +238,11 @@ function renderServices() {
                 text.textContent = it.name;
                 const ctrls = document.createElement('span');
                 ctrls.className = 'action-group';
-                ctrls.appendChild(iconBtn('fa-xmark', 'Ukloni stavku', () => { svc.items.splice(idx, 1); saveCars(); renderServices(); }, 'act-del'));
+                ctrls.appendChild(iconBtn('fa-xmark', 'Ukloni stavku', () => {
+                    openConfirm(`Ukloni stavku "${it.name}" iz servisa "${svc.name}"?`, () => {
+                        svc.items.splice(idx, 1); saveCars(); renderServices();
+                    }, 'Ukloni');
+                }, 'act-del'));
                 li.append(bullet, text, ctrls);
                 ul.appendChild(li);
             });
@@ -322,7 +326,9 @@ function renderNoteList(container, arr, key, emptyMsg) {
         ctrls.className = 'action-group';
         ctrls.append(
             iconBtn('fa-pen', 'Izmeni', () => editNote(key, idx)),
-            iconBtn('fa-trash', 'Obriši', () => { arr.splice(idx, 1); saveCars(); renderNotes(); }, 'act-del')
+            iconBtn('fa-trash', 'Obriši', () => {
+                openConfirm(`Obriši "${text}"?`, () => { arr.splice(idx, 1); saveCars(); renderNotes(); });
+            }, 'act-del')
         );
         li.append(ctrls);
         ul.appendChild(li);
