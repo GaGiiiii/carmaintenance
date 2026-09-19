@@ -9,12 +9,6 @@ const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
 const syncModal = new bootstrap.Modal(document.getElementById('syncModal'));
 const driveModal = new bootstrap.Modal(document.getElementById('driveModal'));
 
-const modalEls = ['formModal', 'confirmModal', 'alertModal', 'syncModal', 'driveModal'].map(id => document.getElementById(id));
-modalEls.forEach(m => {
-    m.addEventListener('show.bs.modal', () => m.classList.add('d-flex', 'align-items-center'));
-    m.addEventListener('hidden.bs.modal', () => m.classList.remove('d-flex', 'align-items-center'));
-});
-
 // ----- DOM refs -----
 const carTabs = document.getElementById('car-tabs');
 const mileageValue = document.getElementById('mileage-value');

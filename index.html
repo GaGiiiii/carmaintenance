@@ -136,7 +136,7 @@
 
     <!-- Generic Form Modal (add/edit parts, services, cars, mileage, ...) -->
     <div class="modal fade" id="formModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold text-dark" id="form-title"></h5>
@@ -147,8 +147,8 @@
                     <div id="form-error" class="text-danger small mt-2 d-none"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="submitForm()">Sačuvaj</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+                    <button type="button" class="btn btn-primary" onclick="submitForm()">Sačuvaj</button>
                 </div>
             </div>
         </div>
@@ -156,15 +156,15 @@
 
     <!-- Generic Confirm Modal -->
     <div class="modal fade" id="confirmModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold text-dark" id="confirm-message"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" id="confirm-ok-btn" onclick="submitConfirm()">Obriši</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+                    <button type="button" class="btn btn-danger" id="confirm-ok-btn" onclick="submitConfirm()">Obriši</button>
                 </div>
             </div>
         </div>
@@ -172,7 +172,7 @@
 
     <!-- Generic Alert Modal -->
     <div class="modal fade" id="alertModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold text-dark" id="alert-message"></h5>
@@ -187,7 +187,7 @@
 
     <!-- Sync Modal -->
     <div class="modal fade" id="syncModal" tabindex="-1">
-        <div class="modal-dialog modal-sm">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold text-dark">Sinhronizacija uređaja</h5>
@@ -219,7 +219,7 @@
 
     <!-- Google Drive Backup Modal -->
     <div class="modal fade" id="driveModal" tabindex="-1">
-        <div class="modal-dialog modal-sm">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold text-dark">Rezervna kopija</h5>
@@ -237,8 +237,8 @@
                             <div id="drive-restore-when" class="small text-dark mb-1"></div>
                             <div class="small text-danger mb-2">Ovo će zameniti sve trenutne podatke o autima podacima iz kopije.</div>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-danger btn-sm flex-grow-1" onclick="driveRestore()">Vrati</button>
                                 <button class="btn btn-secondary btn-sm flex-grow-1" onclick="driveCancelRestore()">Otkaži</button>
+                                <button class="btn btn-danger btn-sm flex-grow-1" onclick="driveRestore()">Vrati</button>
                             </div>
                         </div>
                         <div id="drive-last" class="small text-muted mt-3"></div>
