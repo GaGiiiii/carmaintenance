@@ -84,6 +84,12 @@ body {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
+/* Bootstrap's .card forces its own (dark) text color; follow the theme instead
+   so loose text in a card (e.g. .empty-hint) stays readable on dark themes. */
+.card {
+    color: inherit;
+}
+
 .section-title {
     font-weight: 700;
     letter-spacing: 0.02em;
