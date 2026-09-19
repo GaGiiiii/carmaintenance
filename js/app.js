@@ -193,7 +193,11 @@ function renderServices() {
         servicesList.innerHTML = '<div class="empty-hint">Nema servisa. Dodaj servis (npr. Mali / Veliki servis) i stavke koje treba uraditi.</div>';
         return;
     }
-    car.services.forEach(svc => {
+    // Soonest target first (start of range, else its end); services without a
+    // target keep their insertion order at the bottom.
+    const targetKm = svc => svc.targetFrom ?? svc.targetTo ?? Infinity;
+    const sorted = [...car.services].sort((a, b) => (targetKm(a) - targetKm(b)) || 0);
+    sorted.forEach(svc => {
         const group = document.createElement('div');
         group.className = 'service-group';
 
